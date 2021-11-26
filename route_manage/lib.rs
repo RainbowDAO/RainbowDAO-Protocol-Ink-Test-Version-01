@@ -67,29 +67,4 @@ mod route_manage {
         }
     }
 
-
-    // #[cfg(test)]
-    // mod tests {
-    //     /// Imports all the definitions from the outer scope so we can use them here.
-    //     use super::*;
-    //
-    //     /// Imports `ink_lang` so we can use `#[ink::test]`.
-    //     use ink_lang as ink;
-    //
-    //     /// We test if the default constructor does its job.
-    //     #[ink::test]
-    //     fn default_works() {
-    //         let routeManage = RouteManage::default();
-    //         assert_eq!(routeManage.get(), false);
-    //     }
-    //
-    //     /// We test a simple use case of our contract.
-    //     #[ink::test]
-    //     fn it_works() {
-    //         let mut routeManage = RouteManage::new(false);
-    //         assert_eq!(routeManage.get(), false);
-    //         routeManage.flip();
-    //         assert_eq!(routeManage.get(), true);
-    //     }
-    // }
 }
