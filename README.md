@@ -76,5 +76,3 @@ In the future, we will participate in the parachain auctions of the Polkadot net
 
 
 ![image](https://raw.githubusercontent.com/RainbowDAO/Gitcoin/main/pic/1.png)
-
-
