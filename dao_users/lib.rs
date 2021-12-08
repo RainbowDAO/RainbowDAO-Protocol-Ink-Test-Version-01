@@ -156,41 +156,6 @@ mod dao_users {
             user_info.nickname = nickname;
             true
         }
-
-
-        // fn create_code(&self) -> String {
-        //     let s: String = rand::thread_rng()
-        //         .sample_iter(&Alphanumeric)
-        //         .take(7)
-        //         .map(char::from)
-        //         .collect();
-        //     return s
-        // }
     }
 
-
-    // #[cfg(test)]
-    // mod tests {
-    //     /// Imports all the definitions from the outer scope so we can use them here.
-    //     use super::*;
-    //
-    //     /// Imports `ink_lang` so we can use `#[ink::test]`.
-    //     use ink_lang as ink;
-    //
-    //     /// We test if the default constructor does its job.
-    //     #[ink::test]
-    //     fn default_works() {
-    //         let daoUsers = DaoUsers::default();
-    //         assert_eq!(daoUsers.get(), false);
-    //     }
-    //
-    //     /// We test a simple use case of our contract.
-    //     #[ink::test]
-    //     fn it_works() {
-    //         let mut daoUsers = DaoUsers::new(false);
-    //         assert_eq!(daoUsers.get(), false);
-    //         daoUsers.flip();
-    //         assert_eq!(daoUsers.get(), true);
-    //     }
-    // }
 }

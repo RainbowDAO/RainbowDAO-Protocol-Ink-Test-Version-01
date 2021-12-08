@@ -23,22 +23,20 @@ mod role_manage {
         owner:AccountId,
         index:u64,
         role_map:StorageHashMap<u64,String>,
-        role_privileges:StorageHashMap<String,Vec<String>>,
+        role_authority:StorageHashMap<String,Vec<String>>,
         user_role:StorageHashMap<AccountId,Vec<String>>,
     }
 
     impl RoleManage {
         #[ink(constructor)]
         pub fn new() -> Self {
-            let from = Self::env().caller();
-            let instance = Self {
-                owner:from,
+           Self {
+                owner:Self::env().caller(),
                 index: 0,
                 role_map : StorageHashMap::new(),
-                role_privileges: StorageHashMap::new(),
+                role_authority: StorageHashMap::new(),
                 user_role: StorageHashMap::new()
-            };
-            instance
+            }
         }
 
         fn only_core(&self,sender:AccountId) {
@@ -48,7 +46,6 @@ mod role_manage {
         #[ink(message)]
         pub fn add_role(&mut self, name: String) -> bool {
             self.only_core(Self::env().caller());
-            assert_eq!(self.index + 1 > self.index, true);
             self.role_map.insert(self.index, name);
             self.index += 1;
             true
@@ -67,23 +64,23 @@ mod role_manage {
         }
 
         #[ink(message)]
-        pub fn query_role_by_index(&self, index: u64) -> String {
+        pub fn get_role_by_index(&self, index: u64) -> String {
             self.role_map.get(&index).unwrap().clone()
         }
 
 
         #[ink(message)]
-        pub fn role_insert_privilege(&mut self ,name:String,privilege:String) -> bool {
+        pub fn add_insert_authority(&mut self ,name:String,authority:String) -> bool {
             self.only_core(Self::env().caller());
-            let role_privilege_list = self.role_privileges.entry(name.clone()).or_insert(Vec::new());
-            role_privilege_list.push(privilege);
+            let role_authority_list = self.role_authority.entry(name.clone()).or_insert(Vec::new());
+            role_authority_list.push(authority);
+
             true
         }
 
         #[ink(message)]
-        pub fn list_role_privileges(&self,name:String) -> Vec<String> {
-           let v =  self.role_privileges.get(&name).unwrap().clone();
-            v
+        pub fn list_role_authority(&self,name:String) -> Vec<String> {
+            self.role_authority.get(&name).unwrap().clone()
         }
 
         #[ink(message)]
@@ -105,55 +102,29 @@ mod role_manage {
         }
         #[ink(message)]
         pub fn get_user_roles(&self,user:AccountId) -> Vec<String> {
-           let list =  self.user_role.get(&user).unwrap().clone();
-            list
+         self.user_role.get(&user).unwrap().clone()
         }
+        //Query whether the user has the permission
         #[ink(message)]
-        pub fn check_user_privilege(&self,user:AccountId,privilege:String) -> bool {
-            let list =  self.get_user_privilege(user);
+        pub fn check_user_authority(&self,user:AccountId,authority:String) -> bool {
+            let list =  self.get_user_authority(user);
             for i in  list{
-                if i == privilege {
+                if i == authority {
                     return true
                 }
             }
             false
         }
+        //You can query a role set by user ID and traverse the role set to query the corresponding permission  
         #[ink(message)]
-        pub fn get_user_privilege(&self,user:AccountId) -> Vec<String> {
-            let mut privilege_vec = Vec::new();
-            // role vec
+        pub fn get_user_authority(&self,user:AccountId) -> Vec<String> {
+            let mut authority_vec = Vec::new();
             let list =  self.user_role.get(&user).unwrap().clone();
             for i in list {
-               let mut privileges =  self.role_privileges.get(&i).unwrap().clone();
-                privilege_vec.append(&mut privileges);
+               let mut authority =  self.role_authority.get(&i).unwrap().clone();
+               authority_vec.append(&mut authority);
             }
-            privilege_vec
+            authority_vec
         }
     }
-
-
-    // #[cfg(test)]
-    // mod tests {
-    //     /// Imports all the definitions from the outer scope so we can use them here.
-    //     use super::*;
-    //
-    //     /// Imports `ink_lang` so we can use `#[ink::test]`.
-    //     use ink_lang as ink;
-    //
-    //     /// We test if the default constructor does its job.
-    //     #[ink::test]
-    //     fn default_works() {
-    //         let roleManage = RoleManage::default();
-    //         assert_eq!(roleManage.get(), false);
-    //     }
-    //
-    //     /// We test a simple use case of our contract.
-    //     #[ink::test]
-    //     fn it_works() {
-    //         let mut roleManage = RoleManage::new(false);
-    //         assert_eq!(roleManage.get(), false);
-    //         roleManage.flip();
-    //         assert_eq!(roleManage.get(), true);
-    //     }
-    // }
 }

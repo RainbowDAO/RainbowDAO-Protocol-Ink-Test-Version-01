@@ -91,7 +91,7 @@ mod incomeCategory {
              let mut numbers=self.dao_member_number;
             // let mut money=(self.treasury_vault)*20/100/numbers;
              let mut money=((self.treasury_vault)*0.2 as u128 )as u64;
-              erc20_instance..transfer_from(from, to, money  );
+              erc20_instance.transfer_from(from, to, money  );
              true
          }
 
