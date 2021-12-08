@@ -6,12 +6,11 @@ pub use self::authority_management::{
     AuthorityManagement,
 };
 #[ink::contract]
-mod authority_management {
+mod authority_management{
     use alloc::string::String;
     use ink_prelude::vec::Vec;
     use ink_prelude::collections::BTreeMap;
-    use ink_storage::{collections::HashMap as StorageHashMap, };
-
+    use ink_storage::{collections::HashMap as StorageHashMap};
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
@@ -20,20 +19,19 @@ mod authority_management {
     pub struct AuthorityManagement {
         owner:AccountId,
         index:u64,
-        privilege_map:StorageHashMap<u64,String>,
+        authority_map:StorageHashMap<u64,String>,
 
     }
 
-    impl AuthorityManagement {
+    impl AuthorityManagement{
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
         pub fn new() -> Self {
-            let instance = Self {
+            Self {
                 owner:Self::env().caller(),
                 index: 0,
-                privilege_map : StorageHashMap::new(),
-            };
-            instance
+                authority_map : StorageHashMap::new(),
+            }
         }
 
         fn only_core(&self,sender:AccountId) {
@@ -41,56 +39,29 @@ mod authority_management {
         }
 
         #[ink(message)]
-        pub fn add_privilege(&mut self, name: String) -> bool {
+        pub fn add_authority(&mut self, name: String) -> bool {
             self.only_core(Self::env().caller());
-            assert_eq!(self.index + 1 > self.index, true);
-            self.privilege_map.insert(self.index, name);
+            self.authority_map.insert(self.index, name);
             self.index += 1;
             true
         }
 
         #[ink(message)]
-        pub fn list_privileges(&self) -> Vec<String> {
-            let mut privilege_vec = Vec::new();
-            let mut iter = self.privilege_map.values();
-            let mut privilege = iter.next();
-            while privilege.is_some() {
-                privilege_vec.push(privilege.unwrap().clone());
-                privilege = iter.next();
+        pub fn list_authority(&self) -> Vec<String> {
+            let mut authority_vec = Vec::new();
+            let mut iter = self.authority_map.values();
+            let mut authority = iter.next();
+            while authority.is_some() {
+                authority_vec.push(authority.unwrap().clone());
+                authority = iter.next();
             }
-            privilege_vec
+            authority_vec
         }
 
         #[ink(message)]
-        pub fn query_privilege_by_index(&self, index: u64) -> String {
-            self.privilege_map.get(&index).unwrap().clone()
+        pub fn query_authority_by_index(&self, index: u64) -> String {
+            self.authority_map.get(&index).unwrap().clone()
         }
 
     }
-
-
-    // #[cfg(test)]
-    // mod tests {
-    //     /// Imports all the definitions from the outer scope so we can use them here.
-    //     use super::*;
-    //
-    //     /// Imports `ink_lang` so we can use `#[ink::test]`.
-    //     use ink_lang as ink;
-    //
-    //     /// We test if the default constructor does its job.
-    //     #[ink::test]
-    //     fn default_works() {
-    //         let privilegeManage = PrivilegeManage::default();
-    //         assert_eq!(privilegeManage.get(), false);
-    //     }
-    //
-    //     /// We test a simple use case of our contract.
-    //     #[ink::test]
-    //     fn it_works() {
-    //         let mut privilegeManage = PrivilegeManage::new(false);
-    //         assert_eq!(privilegeManage.get(), false);
-    //         privilegeManage.flip();
-    //         assert_eq!(privilegeManage.get(), true);
-    //     }
-    // }
 }

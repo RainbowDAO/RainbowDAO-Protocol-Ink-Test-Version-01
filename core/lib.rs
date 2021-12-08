@@ -21,21 +21,11 @@ mod core {
         role_manage_addr: Option<AccountId>,
         route_manage: Option<RouteManage>,
         route_manage_addr: Option<AccountId>,
-        authority_management:Option<AuthorityManagement>,
-        authority_management_addr:Option<AccountId>,
+        authority_manage:Option<AuthorityManagement>,
+        authority_manage_addr:Option<AccountId>,
     }
 
     impl Core {
-        // #[ink(constructor)]
-        // pub fn new(role_manage:RoleManage,route_manage:RouteManage,privilege_manage:PrivilegeManage) -> Self {
-        //     let instance = Self {
-        //         owner:Self::env().caller(),
-        //         role_manage : role_manage,
-        //         route_manage : route_manage,
-        //         privilege_manage : privilege_manage,
-        //     };
-        //     instance
-        // }
         #[ink(constructor)]
         pub fn new() -> Self {
             let instance = Self {
@@ -44,8 +34,8 @@ mod core {
                 role_manage_addr : None,
                 route_manage : None,
                 route_manage_addr : None,
-                authority_management : None,
-                authority_management_addr : None,
+                authority_manage : None,
+                authority_manage_addr : None,
             };
             instance
         }
@@ -55,14 +45,14 @@ mod core {
             self.role_manage.as_mut().unwrap().add_role(name);
         }
         #[ink(message)]
-        pub fn add_privilege(&mut self, name: String) {
+        pub fn add_authority(&mut self, name: String) {
             // self.privilege_manage.add_privilege(name);
-            self.authority_management.as_mut().unwrap().add_privilege(name);
+            self.authority_manage.as_mut().unwrap().add_authority(name);
         }
         #[ink(message)]
-        pub fn add_route(&mut self, name: String,value: String) {
-            // self.route_manage.add_route(name,value);
-            self.route_manage.as_mut().unwrap().add_route(name,value);
+        pub fn add_route(&mut self, name: String,addr:AccountId) {
+            // self.route_manage.add_route(name,v);
+            self.route_manage.as_mut().unwrap().add_route(name,addr);
         }
 
         #[ink(message)]
@@ -87,8 +77,8 @@ mod core {
             let init_authority_result = ink_env::instantiate_contract(&authority_management);
             let authority_management_addr = init_authority_result.expect("failed at instantiating the `TemplateManager` contract");
             let authority_contract_instance = ink_env::call::FromAccountId::from_account_id(authority_management_addr);
-            self.authority_management = Some(authority_contract_instance);
-            self.authority_management_addr = Some(authority_management_addr);
+            self.authority_manage = Some(authority_contract_instance);
+            self.authority_manage_addr = Some(authority_management_addr);
 
             let route_manage = RouteManage::new()
                 .endowment(DAO_INIT_BALANCE)
@@ -111,31 +101,5 @@ mod core {
 
     }
 
-    // /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    // /// module and test functions are marked with a `#[test]` attribute.
-    // /// The below code is technically just normal Rust code.
-    // #[cfg(test)]
-    // mod tests {
-    //     /// Imports all the definitions from the outer scope so we can use them here.
-    //     use super::*;
-    //
-    //     /// Imports `ink_lang` so we can use `#[ink::test]`.
-    //     use ink_lang as ink;
-    //
-    //     /// We test if the default constructor does its job.
-    //     #[ink::test]
-    //     fn default_works() {
-    //         let core = Core::default();
-    //         assert_eq!(core.get(), false);
-    //     }
-    //
-    //     /// We test a simple use case of our contract.
-    //     #[ink::test]
-    //     fn it_works() {
-    //         let mut core = Core::new(false);
-    //         assert_eq!(core.get(), false);
-    //         core.flip();
-    //         assert_eq!(core.get(), true);
-    //     }
-    // }
+    
 }
