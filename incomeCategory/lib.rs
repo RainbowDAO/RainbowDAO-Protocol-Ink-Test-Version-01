@@ -83,6 +83,7 @@ mod incomeCategory {
               }
               true
           }
+        
           ///Distribution of fiscal revenue
          #[ink(message)]
          pub fn financial_allocation(&mut self,to:AccountId,addr:AccountId) ->bool{
